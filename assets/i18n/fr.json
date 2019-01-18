@@ -1,0 +1,55 @@
+{
+    "error": {
+        "mqtt": "Désolé, une erreur s'est produite lors de la communication avec la plateforme Snips",
+        "config": "Désolé, une erreur s'est produite avec votre fichier de configuration.",
+        "locale": "Désolé, une erreur s'est produite avec vos paramètres de localisation.",
+        "intentNotRecognized": "Désolé, je n'ai pas compris votre requête.",
+        "APIResponse": "Désolé, une erreur s'est produite avec le service de météo.",
+        "APIRequest": "Désolé, le service de météo est injoignable.",
+        "unspecific": "Oups, quelque chose s'est mal passé."
+    },
+    "defaultName": "Minuteur",
+    "noTimers": "Il semblerait qu'il n'existe pas de minuteur actif. Voulez-vous en créer un ?",
+    "notFound": "Désolé, il semblerait qu'il n'existe pas de minuteur avec ce nom là.",
+    "setTimer": {
+        "ask": "Quel est le nom du minuteur que vous souhaitez créer et pour quelle durée ?",
+        "created": "Très bien, je mets en marche le minuteur pour {{ duration }}.",
+        "created_name": "Ok, on démarre le minuteur {{ name }} pour {{ duration }}."
+    },
+    "getRemainingTime": {
+        "found": "Il reste {{ duration }} pour le minuteur {{ name }}.",
+        "singleTimer": "J'ai trouvé un minuteur appelé {{ name }} qui finit dans {{ duration }}.",
+        "multipleTimers": "Il existe {{ count }} minuteurs. {{- timersRecap }}.",
+        "timerRecap": "{{ name }} finit dans {{ duration }}"
+    },
+    "cancelTimer": {
+        "canceled": "Le minuteur {{ name }} est maintenant annulé.",
+        "singleTimer": "J'ai trouvé un minuteur appelé {{ name }}, voulez vous l'annuler ?",
+        "multipleTimers": "Il existe {{ count }} minuteurs. {{- timerNames }}. Lequel voulez-vous annuler ?"
+    },
+    "pauseTimer": {
+        "paused": "Le minuteur {{ name }} est maintenant en pause.",
+        "singleTimer": "J'ai trouvé un minuteur appelé {{ name }}, voulez vous le mettre en pause ?",
+        "multipleTimers": "Il existe {{ count }} minuteurs. {{- timerNames }}. Lequel voulez-vous mettre en pause ?"
+    },
+    "resumeTimer": {
+        "resumed": "Le minuteur {{ name }} est maintenant en marche.",
+        "singleTimer": "J'ai trouvé un minuteur appelé {{ name }}, voulez vous le remettre en route ?",
+        "multipleTimers": "Il existe {{ count }} minuteurs. {{- timerNames }}. Lequel voulez-vous remettre en marche ?"
+    },
+    "time": {
+        "millisecond": "milliseconde",
+        "millisecond_plural": "millisecondes",
+        "second": "seconde",
+        "second_plural": "secondes",
+        "minute": "minute",
+        "minute_plural": "minutes",
+        "hour": "heure",
+        "hour_plural": "heures",
+        "day": "jour",
+        "day_plural": "jours"
+    },
+    "joins": {
+        "andSomething": "et {{- something }}"
+    }
+}
