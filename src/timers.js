@@ -44,21 +44,24 @@ module.exports = {
     createTimer(duration, siteId, onExpiration, name) {
         const i18n = i18nFactory.get()
         name = name || i18n('defaultName')
-        if(!timers.has(name)) {
-            timers.set(name, initTimer(duration, siteId, onExpiration, name))
-            return name
-        } else {
+
+        let timerName = name
+        if(timers.has(name)) {
             // Not super efficient, but at least concise.
             // Plus there should not be tons of timers with the same name.
             let i = 1
-            let timerName = name + i
+            timerName = name + i
             while(timers.has(timerName)) {
                 i++
                 timerName = name + i
             }
-            timers.set(timerName, initTimer(duration, siteId, onExpiration, timerName))
-            return timerName
         }
+
+        const timer = initTimer(duration, siteId, () => {
+            onExpiration(timer)
+        }, timerName)
+        timers.set(timerName, timer)
+        return timer
     },
     getRemainingTime (name) {
         const timer = name && timers.get(name)

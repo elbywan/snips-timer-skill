@@ -37,6 +37,10 @@
         "singleTimer": "I've found one timer called {{ name }} would you like to resume it?",
         "multipleTimers": "I've found {{ count }} timers. {{- timerNames }}. Which one would you like to resume?"
     },
+    "timerIsUp": {
+        "announce": "Your timer {{ name }} is up.",
+        "addTime": "Okay, adding {{ time }} to your timer."
+    },
     "time": {
         "millisecond": "millisecond",
         "millisecond_plural": "milliseconds",

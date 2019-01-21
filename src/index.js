@@ -13,24 +13,24 @@ withHermes(async (hermes, done) => {
 
         dialog.flows([
             {
-                intent: 'snips-assistant:SetTimerTmp',
-                action: (msg, flow) => handlers.setTimer(msg, flow)
+                intent: 'snips-assistant:SetTimer',
+                action: (msg, flow) => handlers.setTimer(msg, flow, hermes)
             },
             {
                 intent: 'snips-assistant:GetRemainingTime',
-                action: (msg, flow) => handlers.getRemainingTime(msg, flow)
+                action: handlers.getRemainingTime
             },
             {
                 intent: 'snips-assistant:CancelTimer',
-                action: (msg, flow) => handlers.cancelTimer(msg, flow)
+                action: handlers.cancelTimer
             },
             {
                 intent: 'snips-assistant:PauseTimer',
-                action: (msg, flow) => handlers.pauseTimer(msg, flow)
+                action: handlers.pauseTimer
             },
             {
                 intent: 'snips-assistant:ResumeTimer',
-                action: (msg, flow) => handlers.resumeTimer(msg, flow)
+                action: handlers.resumeTimer
             }
         ])
 

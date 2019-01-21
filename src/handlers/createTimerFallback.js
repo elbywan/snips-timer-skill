@@ -8,7 +8,7 @@ module.exports = function(flow) {
         flow.end()
     })
     flow.continue('snips-assistant:Yes', (_, flow) => {
-        flow.continue('snips-assistant:SetTimerTmp', setTimerHandler)
+        flow.continue('snips-assistant:SetTimer', setTimerHandler)
         return i18n('setTimer.ask')
     })
 

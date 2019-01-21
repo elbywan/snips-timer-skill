@@ -37,6 +37,10 @@
         "singleTimer": "J'ai trouvé un minuteur appelé {{ name }}, voulez vous le remettre en route ?",
         "multipleTimers": "Il existe {{ count }} minuteurs. {{- timerNames }}. Lequel voulez-vous remettre en marche ?"
     },
+    "timerIsUp": {
+        "announce":  "Votre minuteur {{ name }} est terminé.",
+        "addTime": "Ok, je rajoute {{ time }} à votre minuteur."
+    },
     "time": {
         "millisecond": "milliseconde",
         "millisecond_plural": "millisecondes",
