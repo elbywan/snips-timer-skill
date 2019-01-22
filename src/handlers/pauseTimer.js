@@ -42,7 +42,7 @@ module.exports = async function (msg, flow) {
         const timerNames = timers.map(timer => timer.name)
         flow.continue('snips-assistant:PauseTimer', (msg, flow) => {
             const nameSlot = message.getSlotsByName(msg, 'timerName', { onlyMostConfident: true })
-            const timer = getTimer(nameSlot.value.value)
+            const timer = nameSlot && getTimer(nameSlot.value.value)
             flow.end()
             if(timer) {
                 timer.pause()
@@ -53,7 +53,8 @@ module.exports = async function (msg, flow) {
 
         return i18n('pauseTimer.multipleTimers', {
             count: timers.length,
-            timerNames: translation.joinTerms(timerNames)
+            timerNamesAnd: translation.joinTerms(timerNames),
+            timerNamesOr: translation.joinTerms(timerNames, 'or')
         })
     }
 }

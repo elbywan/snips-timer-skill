@@ -17,7 +17,7 @@ module.exports = {
         }
     },
     // Joins a list of strings with comma separators and the last element with an 'and'.
-    joinTerms (list) {
+    joinTerms (list, keyword = 'and') {
         if(!list || list.length < 2)
             return list && list[0] || ''
 
@@ -27,7 +27,7 @@ module.exports = {
             const element = list[i]
 
             if(i === (list.length - 1)) {
-                joinedString += ' ' + i18n('joins.andSomething', { something: element }) + ' '
+                joinedString += ' ' + i18n('joins.' + keyword + 'Something', { something: element }) + ' '
                 continue
             } else if(i > 0) {
                 joinedString += ', '

@@ -49,7 +49,8 @@ module.exports = async function (msg, flow) {
 
         return i18n('cancelTimer.multipleTimers', {
             count: timers.length,
-            timerNames: translation.joinTerms(timerNames)
+            timerNamesAnd: translation.joinTerms(timerNames),
+            timerNamesOr: translation.joinTerms(timerNames, 'or')
         })
     }
 }

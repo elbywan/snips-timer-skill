@@ -24,18 +24,18 @@
     },
     "cancelTimer": {
         "canceled": "Sure, the timer {{ name }} is now canceled.",
-        "singleTimer": "I've found one timer called {{ name }} would you like to cancel it?",
-        "multipleTimers": "I've found {{ count }} timers. {{- timerNames }}. Which one would you like to cancel?"
+        "singleTimer": "I've found one timer, would you like to cancel it?",
+        "multipleTimers": "I've found {{ count }} timers. {{- timerNamesAnd }}. Which one would you like to cancel, {{- timerNamesOr }}?"
     },
     "pauseTimer": {
         "paused": "Okay, the timer {{ name }} is now paused.",
-        "singleTimer": "I've found one timer called {{ name }} would you like to pause it?",
-        "multipleTimers": "I've found {{ count }} timers. {{- timerNames }}. Which one would you like to pause?"
+        "singleTimer": "I've found one timer, would you like to pause it?",
+        "multipleTimers": "I've found {{ count }} timers. {{- timerNamesAnd }}. Which one would you like to pause, {{- timerNamesOr }}?"
     },
     "resumeTimer": {
         "resumed": "Okay, the timer {{ name }} is now resumed.",
-        "singleTimer": "I've found one timer called {{ name }} would you like to resume it?",
-        "multipleTimers": "I've found {{ count }} timers. {{- timerNames }}. Which one would you like to resume?"
+        "singleTimer": "I've found one timer, would you like to resume it?",
+        "multipleTimers": "I've found {{ count }} timers. {{- timerNamesAnd }}. Which one would you like to resume, {{- timerNamesOr }}?"
     },
     "timerIsUp": {
         "announce": "Your timer {{ name }} is up.",
@@ -54,6 +54,7 @@
         "day_plural": "days"
     },
     "joins": {
-        "andSomething": "and {{- something }}"
+        "andSomething": "and {{- something }}",
+        "orSomething": "or {{- something }}"
     }
 }
