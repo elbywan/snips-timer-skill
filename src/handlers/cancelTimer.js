@@ -40,7 +40,7 @@ module.exports = async function (msg, flow) {
         const timerNames = timers.map(timer => timer.name)
         flow.continue('snips-assistant:CancelTimer', (msg, flow) => {
             const nameSlot = message.getSlotsByName(msg, 'timerName', { onlyMostConfident: true })
-            const success = deleteTimer(nameSlot.value.value)
+            const success = nameSlot && deleteTimer(nameSlot.value.value)
             flow.end()
             if(success)
                 return i18n('cancelTimer.canceled')
