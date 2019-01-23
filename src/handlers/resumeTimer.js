@@ -41,7 +41,7 @@ module.exports = async function (msg, flow) {
 
         const timerNames = timers.map(timer => timer.name)
         flow.continue('snips-assistant:ResumeTimer', (msg, flow) => {
-            const nameSlot = message.getSlotsByName(msg, 'timerName', { onlyMostConfident: true })
+            const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
             const timer = nameSlot && getTimer(nameSlot.value.value)
             flow.end()
             if(timer) {
