@@ -4,13 +4,14 @@ const handlers = require('./handlers')
 const { translation, logger } = require('./utils')
 
 module.exports = function ({
-    hermesOptions = {}
+    hermesOptions = {},
+    bootstrapOptions = {}
 } = {}) {
     // Initialize hermes
     withHermes(async (hermes, done) => {
         try {
             // Bootstrap config, locale, i18n…
-            await bootstrap()
+            await bootstrap(bootstrapOptions)
 
             const dialog = hermes.dialog()
 

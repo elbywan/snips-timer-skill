@@ -18,6 +18,11 @@ module.exports = {
                 hermesOptions: {
                     address: 'localhost:' + mosquittoPort,
                     logs: true
+                },
+                bootstrapOptions: {
+                    i18n: {
+                        mock: true
+                    }
                 }
             })
         })
