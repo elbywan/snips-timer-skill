@@ -8,8 +8,19 @@ module.exports = async function (msg, flow) {
 
     const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
     const name = nameSlot && nameSlot.value.value
+    const allTimersSlot = message.getSlotsByName(msg, 'all_timers', { onlyMostConfident: true })
 
     logger.debug('name %s', name)
+
+    const timers = getTimers()
+
+    if(allTimersSlot) {
+        flow.end()
+        timers.forEach(timer => {
+            deleteTimer(timer.name)
+        })
+        return i18n('cancelTimer.canceled', { context: 'all' })
+    }
 
     if(name) {
         if(deleteTimer(name)) {
@@ -18,11 +29,15 @@ module.exports = async function (msg, flow) {
         }
     }
 
-    const timers = getTimers()
-
     if(timers.length < 1) {
        return createTimerFallback(flow)
     } else if(timers.length === 1) {
+        if(!name) {
+            flow.end()
+            deleteTimer(timers[0].name)
+            return i18n('cancelTimer.canceled', { name: timers[0].name })
+        }
+
         flow.continue('snips-assistant:No', (_, flow) => {
             flow.end()
         })

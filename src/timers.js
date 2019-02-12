@@ -46,14 +46,14 @@ module.exports = {
         name = name || i18n('defaultName')
 
         let timerName = name
-        if(timers.has(name)) {
-            // Not super efficient, but at least concise.
-            // Plus there should not be tons of timers with the same name.
-            let i = 1
-            timerName = name + i
-            while(timers.has(timerName)) {
-                i++
-                timerName = name + i
+        // Not super efficient, but at least concise.
+        // Plus there should not be tons of timers with the same name.
+        let i = 0
+        while(timers.has(timerName)) {
+            i++
+            timerName = name + ' ' + i18n('numbers.' + i)
+            if(i >= 10) {
+                throw new Error('timerNameExists')
             }
         }
 

@@ -6,7 +6,8 @@
         "intentNotRecognized": "Désolé, je n'ai pas compris votre requête.",
         "APIResponse": "Désolé, une erreur s'est produite avec le service de météo.",
         "APIRequest": "Désolé, le service de météo est injoignable.",
-        "unspecific": "Oups, quelque chose s'est mal passé."
+        "unspecific": "Oups, quelque chose s'est mal passé.",
+        "timerNameExists": "Désolé, il y déjà dix minuteurs qui ont été crées avec ce nom."
     },
     "defaultName": "Minuteur",
     "noTimers": "Il semblerait qu'il n'existe pas de minuteur actif. Voulez-vous en créer un ?",
@@ -14,7 +15,8 @@
     "setTimer": {
         "ask": "Quel est le nom du minuteur que vous souhaitez créer et pour quelle durée ?",
         "created": "Très bien, je mets en marche le minuteur pour {{ duration }}.",
-        "created_name": "Ok, on démarre le minuteur {{ name }} pour {{ duration }}."
+        "created_name": "Ok, on démarre le minuteur {{ name }} pour {{ duration }}.",
+        "askDuration": "Pour quelle durée ?"
     },
     "getRemainingTime": {
         "found": "Il reste {{ duration }} pour le minuteur {{ name }}.",
@@ -24,6 +26,7 @@
     },
     "cancelTimer": {
         "canceled": "Le minuteur {{ name }} est maintenant annulé.",
+        "canceled_all": "Ok, tous les minuteurs sont maintenant annulés.",
         "singleTimer": "J'ai trouvé un minuteur appelé {{ name }}, voulez vous l'annuler ?",
         "multipleTimers": "Il existe {{ count }} minuteurs. {{- timerNames }}. Lequel voulez-vous annuler ?"
     },
@@ -55,5 +58,16 @@
     },
     "joins": {
         "andSomething": "et {{- something }}"
+    },
+    "numbers": {
+        "1": "un",
+        "2": "deux",
+        "3": "trois",
+        "4": "quatre",
+        "5": "cinq",
+        "6": "six",
+        "7": "sept",
+        "8": "huit",
+        "9": "neuf"
     }
 }

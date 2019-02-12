@@ -1,29 +1,12 @@
-const { translation, logger } = require('../utils')
-
-// Wrap handlers to gracefully capture errors
-const handlerWrapper = handler => (
-    async (message, flow, ...args) => {
-        logger.debug('message: %O', message)
-        try {
-            // Run handler until completion
-            const tts = await handler(message, flow, ...args)
-            // And make the TTS speak
-            return tts
-        } catch (error) {
-            // If an error occurs, end the flow gracefully
-            flow.end()
-            // And make the TTS output the proper error message
-            logger.error(error)
-            return await translation.errorMessage(error)
-        }
-    }
-)
+const { handlerWrapper, dialogueRoundWrapper } = require('./wrappers')
 
 // Add handlers here, and wrap them.
 module.exports = {
-    setTimer: handlerWrapper(require('./setTimer')),
-    getRemainingTime: handlerWrapper(require('./getRemainingTime')),
-    cancelTimer: handlerWrapper(require('./cancelTimer')),
-    pauseTimer: handlerWrapper(require('./pauseTimer')),
-    resumeTimer: handlerWrapper(require('./resumeTimer'))
+    handlerWrapper,
+    dialogueRoundWrapper,
+    setTimer: dialogueRoundWrapper(require('./setTimer')),
+    getRemainingTime: dialogueRoundWrapper(require('./getRemainingTime')),
+    cancelTimer: dialogueRoundWrapper(require('./cancelTimer')),
+    pauseTimer: dialogueRoundWrapper(require('./pauseTimer')),
+    resumeTimer: dialogueRoundWrapper(require('./resumeTimer'))
 }

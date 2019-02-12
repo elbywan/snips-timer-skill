@@ -6,6 +6,7 @@ const { message, logger } = require('../utils')
 const { createTimer } = require('../timers')
 const { i18nFactory } = require('../factories')
 const { durationToSpeech } = require('../utils/translation')
+const { dialogueRoundWrapper } = require('./wrappers')
 
 const alarmWav = fs.readFileSync(path.resolve(__dirname, '../../assets/alarm.wav'))
 
@@ -18,7 +19,7 @@ const playAlarmSound = (audio, siteId) => {
     })
 }
 
-module.exports = async function (msg, flow, hermes) {
+module.exports = async function (msg, flow, hermes, { providedName = null } = {}) {
     const i18n = i18nFactory.get()
     const dialog = hermes.dialog()
     const audio = hermes.audio()
@@ -28,11 +29,19 @@ module.exports = async function (msg, flow, hermes) {
     const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
     const durationSlot = message.getSlotsByName(msg, 'duration', { onlyMostConfident: true })
 
-    const name = nameSlot && nameSlot.value.value
-    const duration = message.getDurationSlotValueInMs(durationSlot)
+    const name = providedName || nameSlot && nameSlot.value.value
+    const duration = durationSlot && message.getDurationSlotValueInMs(durationSlot)
 
     logger.debug('name %s', name)
     logger.debug('duration %d', duration)
+
+    if(!duration) {
+        // Duration slot was not provided - loop once to get it
+        flow.continue('snips-assistant:SetTimer', dialogueRoundWrapper((msg, flow) =>
+            module.exports(msg, flow, hermes, { providedName: name })
+        ))
+        return i18n('setTimer.askDuration')
+    }
 
     // On timer expiration
     const onTimerExpiration = timer => {
@@ -60,18 +69,10 @@ module.exports = async function (msg, flow, hermes) {
             site_id: siteId
         })
 
-        const sessionHandler = (msg, flow) => {
+        const sessionHandler = dialogueRoundWrapper((msg, flow) => {
             // Play the alarm sound
             playAlarmSound(audio, siteId)
 
-            flow.continue('snips-assistant:Stop', (msg, flow) => {
-                // Stop the session
-                flow.end()
-            })
-            flow.continue('snips-assistant:Silence', (msg, flow) => {
-                // Stop the session
-                flow.end()
-            })
             flow.continue('snips-assistant:AddTime', (msg, flow) => {
                 // Create the timer again with the updated duration
                 const durationSlot = message.getSlotsByName(msg, 'duration', { onlyMostConfident: true })
@@ -90,7 +91,7 @@ module.exports = async function (msg, flow, hermes) {
 
             // Speak
             return i18n('timerIsUp.announce', { name: timer.name })
-        }
+        })
         dialog.sessionFlow(messageId, sessionHandler)
     }
 

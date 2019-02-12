@@ -6,7 +6,8 @@
         "intentNotRecognized": "Sorry, I did not understand your request.",
         "APIResponse": "Sorry, there was an issue with the service provider.",
         "APIRequest": "Sorry, the service provider is unreachable.",
-        "unspecific": "Oops, something went wrong."
+        "unspecific": "Oops, something went wrong.",
+        "timerNameExists": "Sorry, ten timers have already been created with that name."
     },
     "defaultName": "Timer",
     "noTimers": "Seems like you have no active timer for the moment. Would you like to create one?",
@@ -14,7 +15,8 @@
     "setTimer": {
         "ask": "What timer would you like to create and for how long?",
         "created": "Okay, setting a timer for {{ duration }}.",
-        "created_name": "Okay, starting timer {{ name }} for {{ duration }}."
+        "created_name": "Okay, starting timer {{ name }} for {{ duration }}.",
+        "askDuration": "For how long should the timer run?"
     },
     "getRemainingTime": {
         "found": "The timer called {{ name }} has {{ duration }} remaining.",
@@ -24,6 +26,7 @@
     },
     "cancelTimer": {
         "canceled": "Sure, the timer {{ name }} is now canceled.",
+        "canceled_all": "Sure, all your timers are now canceled.",
         "singleTimer": "I've found one timer, would you like to cancel it?",
         "multipleTimers": "I've found {{ count }} timers. {{- timerNamesAnd }}. Which one would you like to cancel, {{- timerNamesOr }}?"
     },
@@ -56,5 +59,16 @@
     "joins": {
         "andSomething": "and {{- something }}",
         "orSomething": "or {{- something }}"
+    },
+    "numbers": {
+        "1": "one",
+        "2": "two",
+        "3": "three",
+        "4": "four",
+        "5": "five",
+        "6": "six",
+        "7": "seven",
+        "8": "eight",
+        "9": "nine"
     }
 }

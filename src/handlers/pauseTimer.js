@@ -25,6 +25,12 @@ module.exports = async function (msg, flow) {
     if(timers.length < 1) {
        return createTimerFallback(flow)
     } else if(timers.length === 1) {
+        if(!name) {
+            flow.end()
+            getTimer(timers[0].name).pause()
+            return i18n('pauseTimer.paused', { name: timers[0].name })
+        }
+
         flow.continue('snips-assistant:No', (_, flow) => {
             flow.end()
         })

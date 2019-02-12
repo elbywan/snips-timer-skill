@@ -1,25 +1,33 @@
 require('./helpers/setup').bootstrap()
 const Session = require('./helpers/session')
-const { getMessageKey } = require('./helpers/tools')
+const { getMessageKey, getMessageOptions } = require('./helpers/tools')
 const {
     createTimerSlot,
-    createDurationSlot
+    createDurationSlot,
+    createAllTimersSlot
 } = require('./utils')
 const timers = require('../src/timers')
 
 // i18n output is mocked when running the tests.
 const DEFAULT_NAME = '{"key":"defaultName"}'
 
-it('should set a new Timer (Pizza, 5 minutes)', async () => {
+it('should set a new Timer (Pizza, duration omitted then 5 minutes)', async () => {
     const session = new Session()
     await session.start({
         intentName: 'snips-assistant:SetTimer',
         input: 'Start a timer called Pizza for five minutes',
         slots: [
-            createTimerSlot('Pizza'),
+            createTimerSlot('Pizza')
+        ]
+    })
+    const whichDurationMsg = await session.continue({
+        intentName: 'snips-assistant:SetTimer',
+        input: 'For 5 minutes',
+        slots: [
             createDurationSlot({ minutes: 5 })
         ]
     })
+    expect(getMessageKey(whichDurationMsg)).toBe('setTimer.askDuration')
     await session.end()
 
     const timer = timers.getTimer('Pizza')
@@ -108,17 +116,33 @@ it('should prompt for which timer to pause, then pause the timer called Timer', 
     expect(timer.paused).toBe(true)
 })
 
-it('should prompt for resuming the timer called Timer (no slots)', async () => {
+it('should prompt for resuming the timer called Timer (wrong slot name)', async () => {
+    const session = new Session()
+    await session.start({
+        intentName: 'snips-assistant:ResumeTimer',
+        input: 'Resume my timer called Something',
+        slots: [
+            createTimerSlot('Something')
+        ]
+    })
+    const whichTimerMsg = await session.continue({
+        intentName: 'snips-assistant:No',
+        input: 'No'
+    })
+    expect(getMessageKey(whichTimerMsg)).toBe('resumeTimer.singleTimer')
+    const endMsg = await session.end()
+    expect(endMsg.text).toBe('')
+
+    const timer = timers.getTimer(DEFAULT_NAME)
+    expect(timer.paused).toBe(true)
+})
+
+it('should resume the timer called Timer (no slots)', async () => {
     const session = new Session()
     await session.start({
         intentName: 'snips-assistant:ResumeTimer',
         input: 'Resume my timer'
     })
-    const whichTimerMsg = await session.continue({
-        intentName: 'snips-assistant:Yes',
-        input: 'Yes'
-    })
-    expect(getMessageKey(whichTimerMsg)).toBe('resumeTimer.singleTimer')
     const endMsg = await session.end()
     expect(getMessageKey(endMsg)).toBe('resumeTimer.resumed')
 
@@ -166,4 +190,54 @@ it('should prompt for which timer to Cancel (no slots), then cancel the Pizza ti
 
     const timer = timers.getTimer('Pizza')
     expect(timer).toBeUndefined()
+})
+
+it('should cancel all the timers', async () => {
+    expect(timers.getTimers().length).toBeGreaterThan(0)
+    const session = new Session()
+    await session.start({
+        intentName: 'snips-assistant:CancelTimer',
+        input: 'Cancel all my timers',
+        slots: [
+            createAllTimersSlot()
+        ]
+    })
+    const endMsg = await session.end()
+    expect(getMessageKey(endMsg)).toBe('cancelTimer.canceled')
+    expect(getMessageOptions(endMsg)).toEqual({context: 'all'})
+    expect(timers.getTimers().length).toBe(0)
+})
+
+it('should create ten timers with names incremented by a number and reject an eleventh one', async () => {
+    expect(timers.getTimers().length).toBe(0)
+
+    for(let i = 0; i < 10; i++) {
+        const session = new Session()
+        await session.start({
+            intentName: 'snips-assistant:SetTimer',
+            input: 'Start a timer for 10 minutes',
+            slots: [
+                createTimerSlot('Test'),
+                createDurationSlot({ minutes: 10 })
+            ]
+        })
+        await session.end()
+        const timersArray = timers.getTimers()
+        expect(timersArray.length).toBe(i + 1)
+        expect(timersArray[i].name).toBe(
+            i === 0 ? 'Test' : `Test {"key":"numbers.${i}"}`
+        )
+    }
+
+    const session = new Session()
+    await session.start({
+        intentName: 'snips-assistant:SetTimer',
+        input: 'Start a timer for 10 minutes',
+        slots: [
+            createTimerSlot('Test'),
+            createDurationSlot({ minutes: 10 })
+        ]
+    })
+    const endMsg = await session.end()
+    expect(getMessageKey(endMsg)).toEqual(['error.timerNameExists', 'error.unspecific'])
 })

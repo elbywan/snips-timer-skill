@@ -11,6 +11,18 @@ module.exports = {
             }
         }
     },
+    createAllTimersSlot() {
+        return {
+            slotName: 'all_timers',
+            entity: 'all_timers',
+            confidence: 1,
+            rawValue: 'all',
+            value: {
+                kind: 'Custom',
+                value: 'all'
+            }
+        }
+    },
     createDurationSlot(value) {
         return {
             slotName: 'duration',

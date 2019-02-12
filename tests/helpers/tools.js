@@ -34,5 +34,8 @@ module.exports = {
     },
     getMessageKey(message) {
         return JSON.parse(message.text).key
+    },
+    getMessageOptions(message) {
+        return JSON.parse(message.text).options
     }
 }
