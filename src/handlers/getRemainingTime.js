@@ -3,7 +3,7 @@ const { i18nFactory } = require('../factories')
 const { getRemainingTime } = require('../timers')
 const createTimerFallback = require('./createTimerFallback')
 
-module.exports = async function (msg, flow) {
+module.exports = async function (msg, flow, hermes) {
     const i18n = i18nFactory.get()
 
     const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
@@ -26,7 +26,7 @@ module.exports = async function (msg, flow) {
     }
 
     if(activeTimers.length < 1) {
-       return createTimerFallback(flow)
+       return createTimerFallback(flow, hermes)
     } else if(activeTimers.length === 1) {
         // Found a single timer
         flow.end()

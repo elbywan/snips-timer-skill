@@ -29,7 +29,7 @@ module.exports = async function (msg, flow, hermes, { providedName = null } = {}
     const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
     const durationSlot = message.getSlotsByName(msg, 'duration', { onlyMostConfident: true })
 
-    const name = providedName || nameSlot && nameSlot.value.value
+    const name = nameSlot && nameSlot.value.value || providedName
     const duration = durationSlot && message.getDurationSlotValueInMs(durationSlot)
 
     logger.debug('name %s', name)

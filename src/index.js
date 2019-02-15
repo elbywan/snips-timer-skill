@@ -22,19 +22,19 @@ module.exports = function ({
                 },
                 {
                     intent: 'snips-assistant:GetRemainingTime',
-                    action: handlers.getRemainingTime
+                    action: (msg, flow) => handlers.getRemainingTime(msg, flow, hermes)
                 },
                 {
                     intent: 'snips-assistant:CancelTimer',
-                    action: handlers.cancelTimer
+                    action: (msg, flow) => handlers.cancelTimer(msg, flow, hermes)
                 },
                 {
                     intent: 'snips-assistant:PauseTimer',
-                    action: handlers.pauseTimer
+                    action: (msg, flow) => handlers.pauseTimer(msg, flow, hermes)
                 },
                 {
                     intent: 'snips-assistant:ResumeTimer',
-                    action: handlers.resumeTimer
+                    action: (msg, flow) => handlers.resumeTimer(msg, flow, hermes)
                 }
             ])
         } catch (error) {

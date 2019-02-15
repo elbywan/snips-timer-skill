@@ -4,9 +4,9 @@ const { handlerWrapper, dialogueRoundWrapper } = require('./wrappers')
 module.exports = {
     handlerWrapper,
     dialogueRoundWrapper,
-    setTimer: dialogueRoundWrapper(require('./setTimer')),
-    getRemainingTime: dialogueRoundWrapper(require('./getRemainingTime')),
-    cancelTimer: dialogueRoundWrapper(require('./cancelTimer')),
-    pauseTimer: dialogueRoundWrapper(require('./pauseTimer')),
-    resumeTimer: dialogueRoundWrapper(require('./resumeTimer'))
+    setTimer: handlerWrapper(require('./setTimer')),
+    getRemainingTime: handlerWrapper(require('./getRemainingTime')),
+    cancelTimer: handlerWrapper(require('./cancelTimer')),
+    pauseTimer: handlerWrapper(require('./pauseTimer')),
+    resumeTimer: handlerWrapper(require('./resumeTimer'))
 }

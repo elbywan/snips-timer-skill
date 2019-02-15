@@ -3,7 +3,7 @@ const { i18nFactory } = require('../factories')
 const { getActiveTimers, pauseTimer } = require('../timers')
 const createTimerFallback = require('./createTimerFallback')
 
-module.exports = async function (msg, flow) {
+module.exports = async function (msg, flow, hermes) {
     const i18n = i18nFactory.get()
 
     const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
@@ -18,7 +18,7 @@ module.exports = async function (msg, flow) {
     const timers = getActiveTimers()
 
     if(timers.length < 1) {
-        return createTimerFallback(flow)
+        return createTimerFallback(flow, hermes)
     }
 
     if(allTimersSlot) {
