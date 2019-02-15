@@ -10,6 +10,8 @@
         "timerNameExists": "Désolé, il y déjà dix minuteurs qui ont été crées avec ce nom."
     },
     "defaultName": "Minuteur",
+    "defaultTimerDescription": "un minuteur de {{ duration }}",
+    "namedTimerDescription": "un minuteur {{ name }} de {{ duration }}",
     "noTimers": "Il semblerait qu'il n'existe pas de minuteur actif. Voulez-vous en créer un ?",
     "notFound": "Désolé, il semblerait qu'il n'existe pas de minuteur avec ce nom là.",
     "setTimer": {
@@ -19,29 +21,38 @@
         "askDuration": "Pour quelle durée ?"
     },
     "getRemainingTime": {
-        "found": "Il reste {{ duration }} pour le minuteur {{ name }}.",
-        "singleTimer": "J'ai trouvé un minuteur appelé {{ name }} qui finit dans {{ duration }}.",
+        "found": "Il reste {{ duration }} pour le minuteur.",
+        "found_name": "Il reste {{ duration }} pour le minuteur {{ name }}.",
+        "singleTimer": "J'ai trouvé un minuteur qui finit dans {{ duration }}.",
+        "singleTimer_name": "J'ai trouvé un minuteur appelé {{ name }} qui finit dans {{ duration }}.",
         "multipleTimers": "Il existe {{ count }} minuteurs. {{- timersRecap }}.",
-        "timerRecap": "{{ name }} finit dans {{ duration }}"
+        "timerRecap": "{{ name }} finit dans {{ duration }}",
+        "timerRecap_name": "un minuteur qui finit dans {{ duration }}"
     },
     "cancelTimer": {
-        "canceled": "Le minuteur {{ name }} est maintenant annulé.",
+        "canceled": "Le minuteur est maintenant annulé.",
+        "canceled_name": "Le minuteur {{ name }} est maintenant annulé.",
         "canceled_all": "Ok, tous les minuteurs sont maintenant annulés.",
-        "singleTimer": "J'ai trouvé un minuteur appelé {{ name }}, voulez vous l'annuler ?",
+        "singleTimer": "Je n'ai trouvé qu'un seul minuteur, voulez vous l'annuler ?",
         "multipleTimers": "Il existe {{ count }} minuteurs. {{- timerNames }}. Lequel voulez-vous annuler ?"
     },
     "pauseTimer": {
-        "paused": "Le minuteur {{ name }} est maintenant en pause.",
-        "singleTimer": "J'ai trouvé un minuteur appelé {{ name }}, voulez vous le mettre en pause ?",
+        "paused": "Le minuteur est maintenant en pause.",
+        "paused_name": "Le minuteur {{ name }} est maintenant en pause.",
+        "paused_all": "Tous les minuteurs sont maintenant en pause.",
+        "singleTimer": "Je n'ai trouvé qu'un seul minuteur, voulez vous le mettre en pause ?",
         "multipleTimers": "Il existe {{ count }} minuteurs. {{- timerNames }}. Lequel voulez-vous mettre en pause ?"
     },
     "resumeTimer": {
-        "resumed": "Le minuteur {{ name }} est maintenant en marche.",
-        "singleTimer": "J'ai trouvé un minuteur appelé {{ name }}, voulez vous le remettre en route ?",
+        "resumed": "Le minuteur est maintenant en marche.",
+        "resumed_name": "Le minuteur {{ name }} est maintenant en marche.",
+        "resumed_all": "Tous les minuteurs sont maintenant en marche.",
+        "singleTimer": "Je n'ai trouvé qu'un seul minuteur, voulez vous le remettre en route ?",
         "multipleTimers": "Il existe {{ count }} minuteurs. {{- timerNames }}. Lequel voulez-vous remettre en marche ?"
     },
     "timerIsUp": {
-        "announce":  "Votre minuteur {{ name }} est terminé.",
+        "announce":  "Votre minuteur est terminé.",
+        "announce_name":  "Votre minuteur {{ name }} est terminé.",
         "addTime": "Ok, je rajoute {{ time }} à votre minuteur."
     },
     "time": {
