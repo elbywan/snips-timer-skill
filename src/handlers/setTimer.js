@@ -5,7 +5,7 @@ const { Dialog } = require('hermes-javascript')
 const { message, logger } = require('../utils')
 const { createTimer } = require('../timers')
 const { i18nFactory } = require('../factories')
-const { durationToSpeech } = require('../utils/translation')
+const { durationToSpeech, hasDefaultName } = require('../utils/translation')
 const { dialogueRoundWrapper } = require('./wrappers')
 
 const alarmWav = fs.readFileSync(path.resolve(__dirname, '../../assets/alarm.wav'))
@@ -54,7 +54,7 @@ module.exports = async function (msg, flow, hermes, { providedName = null } = {}
             session_init: {
                 init_type: Dialog.enums.initType.action,
                 value: {
-                    text: i18n('timerIsUp.announce', { name: timer.name, context: timer.name ? 'name' : null }),
+                    text: i18n('timerIsUp.announce', { name: timer.name, context: hasDefaultName(timer.name) ? null : 'name' }),
                     intent_filter: [
                         'snips-assistant:Stop',
                         'snips-assistant:Silence',
@@ -89,7 +89,7 @@ module.exports = async function (msg, flow, hermes, { providedName = null } = {}
             flow.notRecognized(sessionHandler)
 
             // Speak
-            return i18n('timerIsUp.announce', { name: timer.name, context: timer.name ? 'name' : null })
+            return i18n('timerIsUp.announce', { name: timer.name, context: hasDefaultName(timer.name) ? null : 'name' })
         })
         dialog.sessionFlow(messageId, sessionHandler)
     }

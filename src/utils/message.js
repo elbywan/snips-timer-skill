@@ -27,7 +27,7 @@ module.exports = {
         return message.slots.filter(slot => slot.slot_name === slotName && slot.confidence > threshold)
     },
     getAsrConfidence(message) {
-        return geometricMean(message.asr_tokens.map(token => token.confidence))
+        return message.asr_tokens && geometricMean(message.asr_tokens.map(token => token.confidence)) || 1
     },
     // Get a duration slot value in milliseconds
     getDurationSlotValueInMs(slot) {

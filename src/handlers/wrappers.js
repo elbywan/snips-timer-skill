@@ -12,7 +12,7 @@ const handlerWrapper = (handler, { nested = false } = {}) => (
         try {
             // Check the message thresholds
             if(
-                message.intent.probability < (nested ? INTENT_FILTER_THRESHOLD: INTENT_THRESHOLD) ||
+                message.intent && message.intent.probability < (nested ? INTENT_FILTER_THRESHOLD: INTENT_THRESHOLD) ||
                 getAsrConfidence(message) < ASR_THRESHOLD
             ) {
                 throw new Error('intentNotRecognized')

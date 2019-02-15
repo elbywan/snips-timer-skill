@@ -13,7 +13,7 @@ function initTimer(duration, siteId, onExpiration, name) {
         name,
         start: Date.now(),
         duration,
-        timeout: setTimeout(onTimeout, duration),
+        timeout: setTimeout(onTimeout(duration), duration),
         pause() {
             clearTimeout(this.timeout)
             this.paused = true
@@ -24,7 +24,7 @@ function initTimer(duration, siteId, onExpiration, name) {
                 return
             this.paused = false
             this.state = Date.now()
-            this.timeout = setTimeout(onTimeout, this.duration)
+            this.timeout = setTimeout(onTimeout(this.duration), this.duration)
         }
     }
 }
@@ -62,7 +62,7 @@ module.exports = {
         return timer
     },
     getRemainingTime (name, duration) {
-        const timer = name && getTimer(name, duration)
+        const timer = (name || duration) && getTimer(name, duration)
         if(!timer || timer.paused) {
             return module.exports.getActiveTimers().map(timer => ({
                 ...timer,

@@ -14,13 +14,13 @@ module.exports = async function (msg, flow, hermes) {
     logger.debug('name %s', name)
     logger.debug('duration %d', duration)
 
-    const activeTimers = name ? getRemainingTime(name, duration) : getRemainingTime()
+    const activeTimers = (name || duration) ? getRemainingTime(name, duration) : getRemainingTime()
 
-    if(name && !(activeTimers instanceof Array)) {
+    if(activeTimers && (name || duration) && !(activeTimers instanceof Array)) {
         flow.end()
         return i18n('getRemainingTime.found', {
             name,
-            duration: translation.durationToSpeech(activeTimers),
+            duration: translation.durationToSpeech(activeTimers.remaining),
             context: name ? 'name' : null
         })
     }
@@ -33,7 +33,7 @@ module.exports = async function (msg, flow, hermes) {
         return i18n('getRemainingTime.singleTimer', {
             name: activeTimers[0].name,
             duration: translation.durationToSpeech(activeTimers[0].remaining),
-            context: activeTimers[0].name ? name : null
+            context: translation.hasDefaultName(activeTimers[0].name) ? null : 'name'
         })
     } else {
         // Found multiple timers

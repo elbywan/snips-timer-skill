@@ -117,5 +117,9 @@ module.exports = {
             ]
         }, [])
         return joinTerms(timerDescriptions, keyword)
+    },
+    hasDefaultName(timerName) {
+        const i18n = i18nFactory.get()
+        return timerName === i18n('defaultName')
     }
 }

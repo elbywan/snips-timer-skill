@@ -43,7 +43,7 @@ module.exports = async function (msg, flow, hermes) {
         if(!name) {
             flow.end()
             deleteTimer(timers[0].name, timers[0].duration)
-            return i18n('cancelTimer.canceled', { name: timers[0].name, context: timers[0].name ? 'name' : null })
+            return i18n('cancelTimer.canceled', { name: timers[0].name, context: translation.hasDefaultName(timers[0].name) ? null : 'name' })
         }
 
         flow.continue('snips-assistant:No', (_, flow) => {
@@ -52,7 +52,7 @@ module.exports = async function (msg, flow, hermes) {
         flow.continue('snips-assistant:Yes', (_, flow) => {
             flow.end()
             deleteTimer(timers[0].name, timers[0].duration)
-            return i18n('cancelTimer.canceled', { name: timers[0].name, context: timers[0].name ? 'name' : null })
+            return i18n('cancelTimer.canceled', { name: timers[0].name, context: translation.hasDefaultName(timers[0].name) ? null : 'name' })
         })
 
         return i18n('cancelTimer.singleTimer', {
