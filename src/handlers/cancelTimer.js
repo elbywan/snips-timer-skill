@@ -8,34 +8,37 @@ module.exports = async function (msg, flow) {
 
     const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
     const name = nameSlot && nameSlot.value.value
+    const durationSlot = message.getSlotsByName(msg, 'duration', { onlyMostConfident: true })
+    const duration = durationSlot && message.getDurationSlotValueInMs(durationSlot)
     const allTimersSlot = message.getSlotsByName(msg, 'all_timers', { onlyMostConfident: true })
 
     logger.debug('name %s', name)
+    logger.debug('duration %d', duration)
 
     const timers = getTimers()
+
+    if(timers.length < 1) {
+        return createTimerFallback(flow)
+    }
 
     if(allTimersSlot) {
         flow.end()
         timers.forEach(timer => {
-            deleteTimer(timer.name)
+            deleteTimer(timer.name, timer.duration)
         })
         return i18n('cancelTimer.canceled', { context: 'all' })
     }
 
-    if(name) {
-        if(deleteTimer(name)) {
-            flow.end()
-            return i18n('cancelTimer.canceled', { name })
-        }
+    if(deleteTimer(name, duration)) {
+        flow.end()
+        return i18n('cancelTimer.canceled', { name, context: name ? 'name' : null })
     }
 
-    if(timers.length < 1) {
-       return createTimerFallback(flow)
-    } else if(timers.length === 1) {
+    if(timers.length === 1) {
         if(!name) {
             flow.end()
-            deleteTimer(timers[0].name)
-            return i18n('cancelTimer.canceled', { name: timers[0].name })
+            deleteTimer(timers[0].name, timers[0].duration)
+            return i18n('cancelTimer.canceled', { name: timers[0].name, context: timers[0].name ? 'name' : null })
         }
 
         flow.continue('snips-assistant:No', (_, flow) => {
@@ -43,19 +46,20 @@ module.exports = async function (msg, flow) {
         })
         flow.continue('snips-assistant:Yes', (_, flow) => {
             flow.end()
-            deleteTimer(timers[0].name)
-            return i18n('cancelTimer.canceled', { name: timers[0].name })
+            deleteTimer(timers[0].name, timers[0].duration)
+            return i18n('cancelTimer.canceled', { name: timers[0].name, context: timers[0].name ? 'name' : null })
         })
 
         return i18n('cancelTimer.singleTimer', {
             name: timers[0].name
         })
     } else {
-
-        const timerNames = timers.map(timer => timer.name)
         flow.continue('snips-assistant:CancelTimer', (msg, flow) => {
             const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
-            const success = nameSlot && deleteTimer(nameSlot.value.value)
+            const name = nameSlot && nameSlot.value.value
+            const durationSlot = message.getSlotsByName(msg, 'duration', { onlyMostConfident: true })
+            const duration = durationSlot && message.getDurationSlotValueInMs(durationSlot)
+            const success = (name || duration) && deleteTimer(name, duration)
             flow.end()
             if(success)
                 return i18n('cancelTimer.canceled')
@@ -64,8 +68,8 @@ module.exports = async function (msg, flow) {
 
         return i18n('cancelTimer.multipleTimers', {
             count: timers.length,
-            timerNamesAnd: translation.joinTerms(timerNames),
-            timerNamesOr: translation.joinTerms(timerNames, 'or')
+            timerNamesAnd: translation.timerNamesToSpeech(timers),
+            timerNamesOr: translation.timerNamesToSpeech(timers, 'or')
         })
     }
 }

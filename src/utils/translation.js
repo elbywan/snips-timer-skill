@@ -86,5 +86,36 @@ module.exports = {
                 (seconds > 0 ? ` ${seconds} ${i18n('time.second', { count: seconds })}` : '')
             )
         }
+    },
+    timerNamesToSpeech(timers, keyword = 'and') {
+        const { durationToSpeech, joinTerms } = module.exports
+        const i18n = i18nFactory.get()
+        const timersMap = new Map()
+        timers.forEach(timer => {
+            if(!timersMap.has(timer.name)) {
+                timersMap.set(timer.name, [])
+            }
+            timersMap.get(timer.name).push(timer)
+        })
+        const timerDescriptions = Array.from(timersMap).reduce((descs, [ name, timers ]) => {
+            const useDefaultDescription = (name === i18n('defaultName'));
+            if(timers.length === 1) {
+                return [
+                    ...descs,
+                    useDefaultDescription ?
+                        i18n('defaultTimerDescription', { duration: durationToSpeech(timers[0].duration) }) :
+                    i18n('namedTimerDescription', { duration: durationToSpeech(timers[0].duration), name: timers[0].name })
+                ]
+            }
+            return [
+                ...descs,
+                ...timers.map(timer => (
+                    useDefaultDescription ?
+                        i18n('defaultTimerDescription', { duration: durationToSpeech(timer.duration) }) :
+                    i18n('namedTimerDescription', { duration: durationToSpeech(timer.duration), name: timer.name })
+                ))
+            ]
+        }, [])
+        return joinTerms(timerDescriptions, keyword)
     }
 }

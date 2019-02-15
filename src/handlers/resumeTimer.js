@@ -1,6 +1,6 @@
 const { message, logger, translation } = require('../utils')
 const { i18nFactory } = require('../factories')
-const { getTimer, getPausedTimers } = require('../timers')
+const { getPausedTimers, resumeTimer } = require('../timers')
 const createTimerFallback = require('./createTimerFallback')
 
 module.exports = async function (msg, flow) {
@@ -8,27 +8,37 @@ module.exports = async function (msg, flow) {
 
     const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
     const name = nameSlot && nameSlot.value.value
+    const durationSlot = message.getSlotsByName(msg, 'duration', { onlyMostConfident: true })
+    const duration = durationSlot && message.getDurationSlotValueInMs(durationSlot)
+    const allTimersSlot = message.getSlotsByName(msg, 'all_timers', { onlyMostConfident: true })
 
     logger.debug('name %s', name)
-
-    if(name) {
-        const timer = getTimer(name)
-        if(timer) {
-            flow.end()
-            timer.resume()
-            return i18n('resumeTimer.resumed', { name })
-        }
-    }
+    logger.debug('duration %d', duration)
 
     const timers = getPausedTimers()
 
     if(timers.length < 1) {
-       return createTimerFallback(flow)
-    } else if(timers.length === 1) {
+        return createTimerFallback(flow)
+    }
+
+    if(allTimersSlot) {
+        flow.end()
+        timers.forEach(timer => {
+            resumeTimer(timer.name, timer.duration)
+        })
+        return i18n('resumeTimer.resumed', { context: 'all' })
+    }
+
+    if(resumeTimer(name, duration)) {
+        flow.end()
+        return i18n('resumeTimer.resumed', { name, context: name ? 'name' : null })
+    }
+
+    if(timers.length === 1) {
         if(!name) {
             flow.end()
-            getTimer(timers[0].name).resume()
-            return i18n('resumeTimer.resumed', { name: timers[0].name })
+            timers[0].resume()
+            return i18n('resumeTimer.resumed', { name: timers[0].name, context: timers[0].name ? 'name' : null })
         }
 
         flow.continue('snips-assistant:No', (_, flow) => {
@@ -36,22 +46,22 @@ module.exports = async function (msg, flow) {
         })
         flow.continue('snips-assistant:Yes', (_, flow) => {
             flow.end()
-            getTimer(timers[0].name).resume()
-            return i18n('resumeTimer.resumed', { name: timers[0].name })
+            timers[0].resume()
+            return i18n('resumeTimer.resumed', { name: timers[0].name, context: timers[0].name ? 'name' : null })
         })
 
         return i18n('resumeTimer.singleTimer', {
             name: timers[0].name
         })
     } else {
-
-        const timerNames = timers.map(timer => timer.name)
         flow.continue('snips-assistant:ResumeTimer', (msg, flow) => {
             const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
-            const timer = nameSlot && getTimer(nameSlot.value.value)
+            const name = nameSlot && nameSlot.value.value
+            const durationSlot = message.getSlotsByName(msg, 'duration', { onlyMostConfident: true })
+            const duration = durationSlot && message.getDurationSlotValueInMs(durationSlot)
+            const success = (name || duration) && resumeTimer(name, duration)
             flow.end()
-            if(timer) {
-                timer.resume()
+            if(success) {
                 return i18n('resumeTimer.resumed')
             }
             return i18n('notFound')
@@ -59,8 +69,8 @@ module.exports = async function (msg, flow) {
 
         return i18n('resumeTimer.multipleTimers', {
             count: timers.length,
-            timerNamesAnd: translation.joinTerms(timerNames),
-            timerNamesOr: translation.joinTerms(timerNames, 'or')
+            timerNamesAnd: translation.timerNamesToSpeech(timers),
+            timerNamesOr: translation.timerNamesToSpeech(timers, 'or')
         })
     }
 }

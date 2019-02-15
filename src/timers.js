@@ -1,11 +1,12 @@
-const { i18nFactory } = require('./factories')
-
-const timers = new Map()
+const i18nFactory = require('./factories/i18nFactory')
+const timers = []
 
 function initTimer(duration, siteId, onExpiration, name) {
-    const onTimeout = () => {
-        timers.delete(name)
-        onExpiration(name)
+    const onTimeout = duration => () => {
+        const index = timers.findIndex(timer => timer.name === name && timer.duration === duration)
+        if(index >= 0)
+            timers.splice(index, 1)
+        onExpiration(name, duration)
     }
 
     return {
@@ -28,43 +29,40 @@ function initTimer(duration, siteId, onExpiration, name) {
     }
 }
 
+function getTimer(name, duration) {
+    const filteredTimers =  timers.filter(timer =>
+        (name || duration) &&
+        (!name || timer.name === name) &&
+        (!duration || timer.duration === duration)
+    )
+    if((duration && filteredTimers.length >= 1) || filteredTimers.length === 1)
+        return filteredTimers[0]
+    return null
+}
+
 module.exports = {
-    getTimer(name) {
-        return timers.get(name)
-    },
+    getTimer,
     getTimers() {
-        return Array.from(timers).map(([, timer ]) => timer)
+        return [...timers]
     },
     getPausedTimers() {
-        return Array.from(timers).map(([, timer ]) => timer).filter(timer => timer.paused)
+        return timers.filter(timer => timer.paused)
     },
     getActiveTimers() {
-        return Array.from(timers).map(([, timer ]) => timer).filter(timer => !timer.paused)
+        return timers.filter(timer => !timer.paused)
     },
     createTimer(duration, siteId, onExpiration, name) {
         const i18n = i18nFactory.get()
         name = name || i18n('defaultName')
 
-        let timerName = name
-        // Not super efficient, but at least concise.
-        // Plus there should not be tons of timers with the same name.
-        let i = 0
-        while(timers.has(timerName)) {
-            i++
-            timerName = name + ' ' + i18n('numbers.' + i)
-            if(i >= 10) {
-                throw new Error('timerNameExists')
-            }
-        }
-
         const timer = initTimer(duration, siteId, () => {
             onExpiration(timer)
-        }, timerName)
-        timers.set(timerName, timer)
+        }, name)
+        timers.push(timer)
         return timer
     },
-    getRemainingTime (name) {
-        const timer = name && timers.get(name)
+    getRemainingTime (name, duration) {
+        const timer = name && getTimer(name, duration)
         if(!timer || timer.paused) {
             return module.exports.getActiveTimers().map(timer => ({
                 ...timer,
@@ -77,27 +75,27 @@ module.exports = {
             }
         }
     },
-    deleteTimer (name) {
-        if(timers.has(name)) {
-            const timer = timers.get(name)
+    deleteTimer (name, duration) {
+        const timer = getTimer(name, duration)
+        if(timer) {
             clearTimeout(timer.timeout)
-            timers.delete(name)
+            timers.splice(timers.indexOf(timer), 1)
             return true
         }
         return false
     },
-    pauseTimer (name) {
-        if(timers.has(name)) {
-            const timer = timers.get(name)
+    pauseTimer (name, duration) {
+        const timer = getTimer(name, duration)
+        if(timer) {
             if(!timer.paused)
                 timer.pause()
             return true
         }
         return false
     },
-    resume (name) {
-        if(timers.has(name)) {
-            const timer = timers.get(name)
+    resumeTimer (name, duration) {
+        const timer = getTimer(name, duration)
+        if(timer) {
             if(timer.paused)
                 timer.resume()
             return true

@@ -8,16 +8,20 @@ module.exports = async function (msg, flow) {
 
     const nameSlot = message.getSlotsByName(msg, 'timer_name', { onlyMostConfident: true })
     const name = nameSlot && nameSlot.value.value
+    const durationSlot = message.getSlotsByName(msg, 'duration', { onlyMostConfident: true })
+    const duration = durationSlot && message.getDurationSlotValueInMs(durationSlot)
 
     logger.debug('name %s', name)
+    logger.debug('duration %d', duration)
 
-    const activeTimers = name ? getRemainingTime(name) : getRemainingTime()
+    const activeTimers = name ? getRemainingTime(name, duration) : getRemainingTime()
 
     if(name && !(activeTimers instanceof Array)) {
         flow.end()
         return i18n('getRemainingTime.found', {
             name,
-            duration: translation.durationToSpeech(activeTimers)
+            duration: translation.durationToSpeech(activeTimers),
+            context: name ? 'name' : null
         })
     }
 
@@ -28,14 +32,16 @@ module.exports = async function (msg, flow) {
         flow.end()
         return i18n('getRemainingTime.singleTimer', {
             name: activeTimers[0].name,
-            duration: translation.durationToSpeech(activeTimers[0].remaining)
+            duration: translation.durationToSpeech(activeTimers[0].remaining),
+            context: activeTimers[0].name ? name : null
         })
     } else {
         // Found multiple timers
         const timersRecap = activeTimers.map(timer => (
             i18n('getRemainingTime.timerRecap', {
                 name: timer.name,
-                duration: translation.durationToSpeech(timer.remaining)
+                duration: translation.durationToSpeech(timer.remaining),
+                ontext: timer.name ? name : null
             })
         ))
 

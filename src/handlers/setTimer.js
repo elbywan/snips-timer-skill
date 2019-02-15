@@ -45,7 +45,7 @@ module.exports = async function (msg, flow, hermes, { providedName = null } = {}
 
     // On timer expiration
     const onTimerExpiration = timer => {
-        logger.debug('timer ' + timer.name + ' expired.')
+        logger.debug('timer ' + timer.name + ' expired. (duration: ' + timer.duration + ')')
 
         const messageId = uuid()
 
@@ -54,7 +54,7 @@ module.exports = async function (msg, flow, hermes, { providedName = null } = {}
             session_init: {
                 init_type: Dialog.enums.initType.action,
                 value: {
-                    text: i18n('timerIsUp.announce', { name: timer.name }),
+                    text: i18n('timerIsUp.announce', { name: timer.name, context: timer.name ? 'name' : null }),
                     intent_filter: [
                         'snips-assistant:Stop',
                         'snips-assistant:Silence',
@@ -81,7 +81,6 @@ module.exports = async function (msg, flow, hermes, { providedName = null } = {}
                 createTimer(duration, siteId, onTimerExpiration, name)
                 flow.end()
                 return i18n('timerIsUp.addTime', {
-                    name: timer.name,
                     time: durationToSpeech(duration)
                 })
             })
@@ -90,7 +89,7 @@ module.exports = async function (msg, flow, hermes, { providedName = null } = {}
             flow.notRecognized(sessionHandler)
 
             // Speak
-            return i18n('timerIsUp.announce', { name: timer.name })
+            return i18n('timerIsUp.announce', { name: timer.name, context: timer.name ? 'name' : null })
         })
         dialog.sessionFlow(messageId, sessionHandler)
     }

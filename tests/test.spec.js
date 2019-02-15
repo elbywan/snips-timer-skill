@@ -189,7 +189,7 @@ it('should prompt for which timer to Cancel (no slots), then cancel the Pizza ti
     expect(getMessageKey(endMsg)).toBe('cancelTimer.canceled')
 
     const timer = timers.getTimer('Pizza')
-    expect(timer).toBeUndefined()
+    expect(timer).toBeNull()
 })
 
 it('should cancel all the timers', async () => {
@@ -208,36 +208,42 @@ it('should cancel all the timers', async () => {
     expect(timers.getTimers().length).toBe(0)
 })
 
-it('should create ten timers with names incremented by a number and reject an eleventh one', async () => {
+it('should create multiple timers with the same name and different durations and allow cancelling one of them by duration', async () => {
     expect(timers.getTimers().length).toBe(0)
 
-    for(let i = 0; i < 10; i++) {
+    for(let i = 0; i < 5; i++) {
+        const minutes = i === 0 ? 2 : i + 1
         const session = new Session()
         await session.start({
             intentName: 'snips-assistant:SetTimer',
-            input: 'Start a timer for 10 minutes',
+            input: 'Start a timer for '+ minutes + ' minutes',
             slots: [
                 createTimerSlot('Test'),
-                createDurationSlot({ minutes: 10 })
+                // 2 timers that are set for 2 minutes
+                createDurationSlot({ minutes })
             ]
         })
         await session.end()
         const timersArray = timers.getTimers()
         expect(timersArray.length).toBe(i + 1)
-        expect(timersArray[i].name).toBe(
-            i === 0 ? 'Test' : `Test {"key":"numbers.${i}"}`
-        )
+        expect(timersArray[i].name).toBe('Test')
     }
 
     const session = new Session()
     await session.start({
-        intentName: 'snips-assistant:SetTimer',
-        input: 'Start a timer for 10 minutes',
+        intentName: 'snips-assistant:CancelTimer',
+        input: 'Cancel my timer'
+    })
+    const whichTimerMsg = await session.continue({
+        intentName: 'snips-assistant:CancelTimer',
+        input: 'My three minutes timer',
         slots: [
-            createTimerSlot('Test'),
-            createDurationSlot({ minutes: 10 })
+            createDurationSlot({ minutes: 2 })
         ]
     })
+    expect(getMessageKey(whichTimerMsg)).toBe('cancelTimer.multipleTimers')
     const endMsg = await session.end()
-    expect(getMessageKey(endMsg)).toEqual(['error.timerNameExists', 'error.unspecific'])
+    expect(getMessageKey(endMsg)).toBe('cancelTimer.canceled')
+    const timersArray = timers.getTimers()
+    expect(timersArray.length).toBe(4)
 })
