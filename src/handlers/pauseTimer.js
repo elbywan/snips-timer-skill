@@ -24,7 +24,12 @@ module.exports = async function (msg, flow) {
     if(allTimersSlot) {
         flow.end()
         timers.forEach(timer => {
-            pauseTimer(timer.name, timer.duration)
+            if(
+                (!name || timer.name === name) &&
+                (!duration || timer.duration === duration)
+            ) {
+                pauseTimer(timer.name, timer.duration)
+            }
         })
         return i18n('pauseTimer.paused', { context: 'all' })
     }
