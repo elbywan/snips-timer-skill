@@ -1,10 +1,23 @@
-const { translation, logger } = require('../utils')
+const {
+    INTENT_THRESHOLD,
+    INTENT_FILTER_THRESHOLD,
+    ASR_THRESHOLD
+} = require('../constants')
+const { translation, logger, message: { getAsrConfidence } } = require('../utils')
 
 // Wrap handlers to gracefully capture errors
-const handlerWrapper = handler => (
+const handlerWrapper = (handler, { nested = false } = {}) => (
     async (message, flow, ...args) => {
         logger.debug('message: %O', message)
         try {
+            // Check the message thresholds
+            if(
+                message.intent.probability < (nested ? INTENT_FILTER_THRESHOLD: INTENT_THRESHOLD) ||
+                getAsrConfidence(message) < ASR_THRESHOLD
+            ) {
+                throw new Error('intentNotRecognized')
+            }
+
             // Run handler until completion
             const tts = await handler(message, flow, ...args)
             // And make the TTS speak
@@ -31,7 +44,7 @@ const dialogueRoundWrapper = handler => (
         flow.continue('snips-assistant:Cancel', handlerWrapper(() => {
             flow.end()
         }))
-        return handlerWrapper(handler)(message, flow, ...args)
+        return handlerWrapper(handler, { nested: true })(message, flow, ...args)
     }
 )
 
